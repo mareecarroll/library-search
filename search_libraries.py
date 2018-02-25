@@ -103,3 +103,22 @@ def search_moreland(search_term):
         for a in span.find_all('a')[0:1]:
             titles.append(SearchResult(library=library, title=a.text))
     return titles
+
+def search_libraries(search_term):
+    """
+    Searches all library catalogues (Yarra, Melbourne, Moreland).
+
+    Args:
+        search_term (str): The search term for the library catalogues search
+    Returns:
+        (list of SearchResult named tuple): The search results zipped so that 
+            the first result from each library catalogue appears 
+            before the second result of any catalogue, etc
+    """
+    titles = []
+    zipped = zip(search_yarra(search_term), search_melbourne(search_term), search_moreland(search_term))
+    for yarra, melb, moreland in zipped:
+        titles.append(yarra)
+        titles.append(melb)
+        titles.append(moreland)
+    return titles
