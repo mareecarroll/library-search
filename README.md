@@ -10,7 +10,7 @@ Currently can search the Melbourne area library catalogues for Yarra, Melbourne 
 
 Open search-libraries.ipynb
 
-(Alternatively, use binder to run repo)
+(Alternatively, use mybinder.org to run the notebook.)
 
 
 ## Testing
