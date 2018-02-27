@@ -2,7 +2,7 @@
 
 Enables searching across a variety of libraries with a single search.
 
-Currently can search the Melbourne area library catalogues for Yarra, Melbourne and Moreland.
+Currently can search the Melbourne area library catalogues for Yarra, Melbourne, Moreland and CloudLibrary Melbourne.
 
 ## Goodreads key required
 
