@@ -6,6 +6,13 @@ Returns results as SearchResult named tuple with library and title attributes.
 import requests
 from bs4 import BeautifulSoup 
 from collections import namedtuple
+from configparser import ConfigParser
+from os.path import dirname, realpath, join
+import urllib
+
+
+# config = ConfigParser()
+# config.read(join(dirname(realpath(__file__)), '.env'))
 
 
 SearchResult = namedtuple("SearchResult", "library title")
@@ -104,6 +111,30 @@ def search_moreland(search_term):
             titles.append(SearchResult(library=library, title=a.text))
     return titles
 
+def search_cloudlibrary_melbourne(search_term):
+    """
+    Searches Melbourne cloud library catalogue.
+
+    Args:
+        search_term (str): The search term for the library catalogue search
+    Returns:
+        (list of SearchResult named tuple): The search results
+    """
+    library = 'cloud library melbourne'
+    data = {'SearchString': search_term, 'SortBy':"",'count':20,'from':0}
+    payload = {'media': 'all', 'src': 'lib'}
+    search_term = urllib.parse.quote(search_term)
+    url = 'https://ebook.yourcloudlibrary.com/uisvc/melbourne/Search/CatalogSearch'
+    referer = 'https://ebook.yourcloudlibrary.com/library/melbourne/Search/{}'.format(search_term)
+    r = requests.post(url, params=payload, data=data, headers={'referer': referer})
+    response = r.json()
+    titles = []
+    for item in response['Items']:
+        last, first = item['Authors'].split(',') # assuming only one author
+        titles.append(SearchResult(library=library, 
+                                   title="{} by {} {}".format(item["Title"], first, last)))
+    return titles
+
 def search_libraries(search_term):
     """
     Searches all library catalogues (Yarra, Melbourne, Moreland).
@@ -116,9 +147,13 @@ def search_libraries(search_term):
             before the second result of any catalogue, etc
     """
     titles = []
-    zipped = zip(search_yarra(search_term), search_melbourne(search_term), search_moreland(search_term))
-    for yarra, melb, moreland in zipped:
+    zipped = zip(search_yarra(search_term), 
+                 search_melbourne(search_term), 
+                 search_moreland(search_term),
+                 search_cloudlibrary_melbourne(search_term))
+    for yarra, melb, moreland, cloud_library_melb in zipped:
         titles.append(yarra)
         titles.append(melb)
         titles.append(moreland)
+        titles.append(cloud_library_melb)
     return titles
