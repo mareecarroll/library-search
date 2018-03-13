@@ -3,6 +3,7 @@ Provides functionality to search libraries in Melbourne area.
 
 Returns results as SearchResult named tuple with library and title attributes.
 """
+import sys
 import requests
 from bs4 import BeautifulSoup 
 from collections import namedtuple
@@ -130,7 +131,7 @@ def search_cloudlibrary_melbourne(search_term):
     response = r.json()
     titles = []
     for item in response['Items']:
-        last, first = item['Authors'].split(',') # assuming only one author
+        last, first = item['Authors'].split(',')[0:2] # assuming only one author
         titles.append(SearchResult(library=library, 
                                    title="{} by {} {}".format(item["Title"], first, last)))
     return titles
@@ -157,3 +158,13 @@ def search_libraries(search_term):
         titles.append(moreland)
         titles.append(cloud_library_melb)
     return titles
+
+
+def main():
+    """Used if called as script from command line."""
+    search_term = sys.argv[1]
+    print(search_libraries(search_term))
+
+
+if __name__ == "__main__":
+    main()
